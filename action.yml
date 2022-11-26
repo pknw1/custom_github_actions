@@ -24,6 +24,7 @@ runs:
         if ($RestResponse){
           $MostRecentArtifactURI = $RestResponse | Sort-Object -Property created_at -Descending | where name -eq "${{ inputs.terraform_state_file_name }}-${{ inputs.folder }}-terraformstatefile" | Select-Object -First 1 | Select-Object -ExpandProperty archive_download_url
           Write-Host "Most recent artifact URI = $MostRecentArtifactURI"
+          }
    
       shell: pwsh
 branding:
