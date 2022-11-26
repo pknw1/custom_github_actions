@@ -1,0 +1,31 @@
+
+
+name: 'check_artifact_exists'
+description: 'Sets up and runs Terraform, and creates an encrypted Terraform artifact'
+author: 'Paul Kelleher'
+inputs:
+  github_pat:
+    required: true
+    
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.branch_name }}
+    - uses: hashicorp/setup-terraform@v2
+    - id: terraform
+      run: |
+        $Repo = "${{ github.repository }}"
+        $BaseUri = "https://api.github.com"
+        $ArtifactUri = "$BaseUri/repos/$Repo/actions/artifacts"
+        $Token = "${{ github.token }}" | ConvertTo-SecureString -AsPlainText
+        $RestResponse = Invoke-RestMethod -Authentication Bearer -Uri $ArtifactUri -Token $Token | Select-Object -ExpandProperty artifacts
+        if ($RestResponse){
+          $MostRecentArtifactURI = $RestResponse | Sort-Object -Property created_at -Descending | where name -eq "${{ inputs.terraform_state_file_name }}-${{ inputs.folder }}-terraformstatefile" | Select-Object -First 1 | Select-Object -ExpandProperty archive_download_url
+          Write-Host "Most recent artifact URI = $MostRecentArtifactURI"
+   
+      shell: pwsh
+branding:
+  icon: 'cloud'
+  color: 'gray-dark'
