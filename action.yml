@@ -13,8 +13,7 @@ runs:
     - uses: actions/checkout@v3
       with:
         ref: ${{ inputs.branch_name }}
-    - uses: hashicorp/setup-terraform@v2
-    - id: terraform
+    - id: artifact
       run: |
         $Repo = "${{ github.repository }}"
         $BaseUri = "https://api.github.com"
@@ -23,7 +22,10 @@ runs:
         $RestResponse = Invoke-RestMethod -Authentication Bearer -Uri $ArtifactUri -Token $Token | Select-Object -ExpandProperty artifacts
         if ($RestResponse){
           $MostRecentArtifactURI = $RestResponse | Sort-Object -Property created_at -Descending | where name -eq "${{ inputs.terraform_state_file_name }}-${{ inputs.folder }}-terraformstatefile" | Select-Object -First 1 | Select-Object -ExpandProperty archive_download_url
-          Write-Host "Most recent artifact URI = $MostRecentArtifactURI"
+          Write-Host "$MostRecentArtifactURI"
+          } else
+          {
+          Write-Host ""
           }
    
       shell: pwsh
