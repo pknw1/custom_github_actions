@@ -1,0 +1,24 @@
+
+name: 'devops_init'
+description: ''
+author: 'Paul Kelleher'
+inputs:
+  github_pat:
+    required: true
+    
+runs:
+  using: "composite"
+  if: ${{ inputs.var1 == "var1" }}
+  steps:
+    - id: artifact
+      run: |
+        $Repo = "${{ github.repository }}"
+        $BaseUri = "https://api.github.com"
+ 
+        Write-Host "$Repo"
+         
+      shell: pwsh
+    - run: 
+branding:
+  icon: 'cloud'
+  color: 'gray-dark'
