@@ -1,24 +1,21 @@
 
-name: 'devops_init'
+name: 'terascan'
 description: ''
 author: 'Paul Kelleher'
 inputs:
-  github_pat:
+  action:
     required: true
     
 runs:
   using: "composite"
-  if: ${{ inputs.var1 == "var1" }}
   steps:
-    - id: artifact
+    - id: terascan
       run: |
-        $Repo = "${{ github.repository }}"
-        $BaseUri = "https://api.github.com"
- 
-        Write-Host "$Repo"
-         
-      shell: pwsh
-    - run: 
+        curl -L "$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | grep -o -E "https://.+?_Linux_x86_64.tar.gz")" > terrascan.tar.gz 
+        tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz
+        install terrascan /usr/local/bin && rm terrascan
+        terrascan --help
+      shell: bash
 branding:
   icon: 'cloud'
   color: 'gray-dark'
